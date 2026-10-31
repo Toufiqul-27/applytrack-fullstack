@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: applytrack
+      POSTGRES_USER: applytrack
+      POSTGRES_PASSWORD: applytrack_dev
+    ports:
+      - "5434:5432"
+    volumes:
+      - applytrack_db:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U applytrack -d applytrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  applytrack_db:
